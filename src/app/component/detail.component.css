@@ -1,0 +1,82 @@
+.album-cover {
+    transition: transform .3s;
+}
+
+.album-cover:hover {
+    transform: scale(1.15);
+}
+
+.image-nav-left {
+    position: absolute;
+    height: 60%;
+    width: 30%;
+    left: 0;
+    cursor: pointer;
+}
+
+.image-nav-right {
+    position: absolute;
+    height: 60%;
+    width: 30%;
+    right: 0;
+    cursor: pointer;
+}
+
+.image-button-left {
+    position: absolute;
+    top: 45%;
+    left: 30%;
+}
+
+.image-button-right {
+    position: absolute;
+    top: 45%;
+    right: 30%;
+}
+
+.image-nav-left:hover .image-button-left {
+    color: lightgray;
+}
+
+.image-nav-right:hover .image-button-right {
+    color: lightgray;
+}
+
+.image-name {
+    position: absolute;
+    color: white;
+    top: 1rem;
+    left: 1rem;
+}
+
+.add-image {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+}
+
+.delete-image {
+    -webkit-animation: fade 2s;
+    animation: fade 2s;    
+    display: none;
+}
+
+.album-cover:hover .delete-image {
+    display: inline-flex;
+}
+
+.cover-upload {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 0.5rem;
+    display: none;
+    -webkit-animation: fade 2s;
+    animation: fade 2s;
+}
+
+.image:hover .cover-upload {
+    display: block;
+}

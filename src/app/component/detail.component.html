@@ -1,0 +1,162 @@
+<div class="mx-5 my-3">
+    <div class='columns'>
+        <div class='column is-6 pb-0'>
+            <span routerLink="/" class="icon is-large action-button is-clickable mb-1" title="Back">
+        <i class="fas fa-arrow-left"></i>
+      </span>
+        </div>
+        <div class='column is-6 pb-0 has-text-right'>
+            <span class="icon is-large action-button is-clickable mb-1" title="Cancel" [hidden]="!isEditting" (click)="isEditting = false">
+        <i class="fas fa-times"></i>
+      </span>
+            <span class="icon is-large action-button is-clickable mb-1" title="Save" [hidden]="!isEditting" (click)="saveEdit()">
+        <i class="fas fa-check"></i>
+      </span>
+            <span class="icon is-large action-button is-clickable mb-1" title="Edit" [hidden]="isEditting" (click)="enableEdit()">
+        <i class="fas fa-edit"></i>
+      </span>
+            <span class="icon is-large action-button is-clickable mb-1" title="Delete" (click)="deleteAlbum()">
+        <i class="fas fa-trash-alt"></i>
+      </span>
+        </div>
+    </div>
+    <div class="columns">
+        <div class="column is-4">
+            <figure class="image is-3by2">
+                <img src="{{album.coverImage}}" alt="{{album.albumName}}" style="border-radius: 5px">
+                <div class="file is-small is-dark cover-upload">
+                    <label class="file-label">
+            <input id="fileInputCover" class="file-input" type="file" accept=".jpg,.jpeg,.png"
+              (change)="uploadCover($event)">
+            <span class="file-cta">
+              <span class="file-icon">
+                <i class="fas fa-camera"></i>
+              </span>
+              <span class="file-label">
+                Change cover
+              </span>
+            </span>
+          </label>
+                </div>
+            </figure>
+        </div>
+        <div class="column is-8">
+            <div class="box">
+                <article class="media">
+                    <div class="media-content">
+                        <div class="content">
+                            <p class="subtitle is-6 has-text-right" [hidden]="isEditting">{{album.createDate.toLocaleString()}}</p>
+                            <p class="title is-4" [hidden]="isEditting">{{album.albumName}}</p>
+                            <div class="field" [hidden]="!isEditting">
+                                <div class="control">
+                                    <input class="input" type="text" placeholder="Album name" [(ngModel)]="inputAlbumName" maxlength="100">
+                                </div>
+                            </div>
+                            <p [hidden]="isEditting">
+                                <span>{{shortenParagraph(album.description, isExpanded)}}</span>
+                                <a [hidden]="isExpanded" (click)="isExpanded = true">show more</a>
+                            </p>
+                            <div class="field" [hidden]="!isEditting">
+                                <div class="control">
+                                    <textarea class="textarea" rows="10" placeholder="Description" [(ngModel)]="inputDescription" maxlength="1000"></textarea>
+                                </div>
+                            </div>
+                            <nav class="level is-mobile">
+                                <div class="level-item has-text-centered">
+                                    <div>
+                                        <p class="heading">Photos</p>
+                                        <p class="title has-text-primary-dark">{{album.imageList.length.toLocaleString()}}</p>
+                                    </div>
+                                </div>
+                                <div class="level-item has-text-centered">
+                                    <div>
+                                        <p class="heading">Likes</p>
+                                        <p class="title has-text-danger">{{album.like.toLocaleString()}}</p>
+                                    </div>
+                                </div>
+                                <div class="level-item has-text-centered">
+                                    <div>
+                                        <p class="heading">Favorite</p>
+                                        <p class="title has-text-grey" (click)="album.star = !album.star">
+                                            <span class="icon is-clickable" [ngClass]="{'has-text-warning' : album.star == true}">
+                        <i class="fas fa-star"></i>
+                      </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </nav>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+    <div class='columns is-multiline'>
+        <div class='column is-2'>
+            <div class="card">
+                <div class="card-image">
+                    <figure class="image is-square has-background-grey">
+                        <span class="icon is-large add-new">
+              <i class="far fa-image fa-4x"></i>
+            </span>
+                        <div class="card-content add-image">
+                            <label class="image-upload-container btn btn-bwm">
+                <div class="field is-clickable" style="height: 100%">
+                  <div class="file is-large is-boxed">
+                    <label class="file-label">
+                      <input id="fileInputImage" class="file-input" type="file" accept=".jpg,.jpeg,.png"
+                        (change)="uploadImage($event)">
+                      <span class="file-cta" style="display: none">
+                      </span>
+                    </label>
+                        </div>
+                </div>
+                </label>
+            </div>
+            </figure>
+            <div class="overlay-background has-text-centered pb-3" style="background: none">
+                <span>Add photo</span>
+            </div>
+        </div>
+    </div>
+</div>
+<div class='column is-2' *ngFor="let image of album.imageList; let i = index">
+    <div class="card album-cover">
+        <div class="card-image">
+            <figure class="image is-square">
+                <img class="is-clickable" [defaultImage]="defaultImage" [lazyLoad]="image.imageUrl" alt="{{image.imageName}}" (click)="displayImage(image, i)">
+                <div class="overlay-background">
+                    <span class="icon is-clickable" [ngClass]="{'has-text-danger': image.like > 0}" (click)="likeImage(image)">
+                <i class="fas fa-heart"></i>
+              </span>
+                    <span>{{image.like.toLocaleString()}}</span>
+                    <span class="icon is-clickable delete-image" title="Delete" style="float: right" (click)="deleteImage(i, image.like)">
+                <i class="far fa-trash-alt"></i>
+              </span>
+                </div>
+            </figure>
+        </div>
+    </div>
+</div>
+</div>
+<div class="modal" [ngClass]="{'is-active': isDisplay}">
+    <div class="modal-background" (click)="closeImage()"></div>
+    <div class="modal-content">
+        <p class="image">
+            <img src="{{image.imageUrl}}" alt="{{image.imageName}}">
+        </p>
+    </div>
+    <div class="image-nav-left" (click)="moveToImage(currentIndex - 1)">
+        <span class="icon is-large image-button-left">
+        <i class="fas fa-chevron-left fa-3x"></i>
+      </span>
+    </div>
+    <div class="image-nav-right" (click)="moveToImage(currentIndex + 1)">
+        <span class="icon is-large image-button-right">
+        <i class="fas fa-chevron-right fa-3x"></i>
+      </span>
+    </div>
+    <p class="image-name">{{image.imageName}}</p>
+    <button class="modal-close is-large" aria-label="close" (click)="closeImage()"></button>
+</div>
+</div>

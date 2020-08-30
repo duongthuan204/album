@@ -1,0 +1,146 @@
+<!-- <div class="tabs is-medium">
+  <ul>
+    <li class="is-active">
+      <a>
+        <span class="icon is-small"><i class="fas fa-image" aria-hidden="true"></i></span>
+        <span>Albums ({{albumList.length}})</span>
+      </a>
+    </li>
+  </ul>
+</div> -->
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a class="navbar-item is-size-5 mx-2 has-text-grey-dark" (click)="scrollToTop()">
+      <span class="icon is-small mx-2"><i class="far fa-images" aria-hidden="true"></i></span>
+      <span>Albums (</span>
+      <span [hidden]="isSearching || isFiltering">{{albumList.length}})</span>
+      <span [hidden]="!isSearching && !isFiltering">{{totalAlbum}})</span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-end">
+      <div class="navbar-item">
+        <div class="field is-grouped is-grouped-multiline">
+          <p class="control has-icons-left has-icons-right">
+            <input class="input" placeholder="Search..." [(ngModel)]="searchText" (input)="search(searchText)">
+            <span class="icon is-small is-left">
+              <i class="fas fa-search"></i>
+            </span>
+            <span class="icon is-clickable is-small is-right" title="Clear" [hidden]="!isSearching"
+              (click)="search('');searchText=''" style="pointer-events: visible">
+              <i class="fas fa-times"></i>
+            </span>
+          </p>
+          <p class="control">
+            <a class="button" [ngClass]="{'is-warning is-light' : isFiltering}" (click)="showFavoriteAlbum()">
+              <span class="icon has-text-warning">
+                <i class="fas fa-star"></i>
+              </span>
+            </a>
+          </p>
+          <p class="control">
+            <a class="button" href="https://github.com/duongthuan204/album" target="_blank">
+              <span class="icon">
+                <i class="fab fa-github"></i>
+              </span>
+            </a>
+          </p>
+        </div>
+      </div>
+      <!-- <div class="navbar-item">
+        <div class="dropdown is-right" [ngClass]="{'is-active' : isSorting}" (click)="isSorting = !isSorting">
+          <div class="dropdown-trigger">
+            <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
+              <span>Sort by</span>
+              <span class="icon is-small">
+                <i class="fas fa-sort" aria-hidden="true"></i>
+              </span>
+            </button>
+          </div>
+          <div class="dropdown-menu" id="dropdown-menu" role="menu">
+            <div class="dropdown-content">
+              <a href="#" class="dropdown-item">
+                Album name
+              </a>
+              <a href="#" class="dropdown-item">
+                Created date
+              </a>              
+              <a class="dropdown-item">
+                Number of photos
+              </a>
+              <a href="#" class="dropdown-item is-active">
+                Number of likes
+              </a>
+              <a href="#" class="dropdown-item">
+                Favorite
+              </a>
+              <hr class="dropdown-divider">
+              <a href="#" class="dropdown-item is-active">
+                Ascending
+              </a>
+              <a href="#" class="dropdown-item">
+                Descending 
+              </a>              
+            </div>
+          </div>
+        </div>
+      </div> -->
+    </div>
+  </div>
+</nav>
+<div class="columns is-multiline mx-3 my-6" style="margin-top: 5rem !important">
+  <div class="column is-3" [hidden]="isSearching || isFiltering">
+    <div class="card" style="border-radius: 8px;">
+      <div class="card-image is-clickable">
+        <figure class="image is-3by2 has-background-grey" (click)="displayNewAlbum()"
+          style="border-radius: 8px 8px 0 0">
+          <span class="icon is-large add-new">
+            <i class="fas fa-plus-circle fa-5x"></i>
+          </span>
+        </figure>
+      </div>
+      <div class="card-content has-text-centered">
+        <p>Create new album</p>
+      </div>
+    </div>
+  </div>
+  <div id="album_{{i}}" class="column is-3 album-cover" *ngFor="let album of albumList; let i = index"
+    [hidden]="album.isHide">
+    <div class="card" style="border-radius: 8px">
+      <div class="card-image is-clickable" (click)="goToDetail(i)">
+        <figure class="image is-3by2">
+          <img [defaultImage]="defaultImage" [lazyLoad]="album.coverImage" alt="{{album.albumName}}"
+            style="border-radius: 8px 8px 0 0">
+        </figure>
+      </div>
+      <div class="card-content">
+        <p class="title is-6 text-ellipsis" title="{{album.albumName}}">{{album.albumName}}</p>
+        <p class="subtitle is-6" *ngIf="album.imageList.length != 0">{{album.imageList.length}} photos</p>
+        <p class="subtitle is-6" *ngIf="album.imageList.length == 0">No photo</p>
+      </div>
+      <footer class="card-footer mx-3">
+        <div class="column is-6 has-text-grey">
+          <span class="icon" [ngClass]="{'has-text-danger' : album.like > 0}">
+            <i class="fas fa-heart"></i>
+          </span>
+          <span class="has-text-grey-dark">{{album.like.toLocaleString()}}</span>
+        </div>
+        <div class="column is-6 has-text-grey has-text-right" (click)="markFavorite(album)">
+          <span class="icon is-clickable" [ngClass]="{'has-text-warning' : album.star == true}">
+            <i class="fas fa-star"></i>
+          </span>
+        </div>
+      </footer>
+    </div>
+  </div>
+</div>
+<div class="modal is-active" id="loading">
+  <div class="modal-background has-background-white"></div>
+  <div class="modal-content">
+    <p class="image is-4by3" style="padding-top: 50%">
+      <img style="object-fit: contain" src="{{defaultImage}}">
+    </p>
+  </div>
+</div>
+<app-new-album [isDisplay]="isDisplayNewAlbum" (OutputEvent)="receiveValue($event)" (AddNewAlbum)="addNewAlbum($event)">
+</app-new-album>
